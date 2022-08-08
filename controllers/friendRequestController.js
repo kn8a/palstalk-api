@@ -66,9 +66,9 @@ const acceptFriendRequest = asyncHandler( async (req,res) => {
         return
     }
     const updateRequest = await FriendRequest.findByIdAndUpdate(req.params.requestId, {status: 'accepted'})
-    const updateSender = await User.findByIdAndUpdate(sender._id, {$push: {friends: receiver}})
-    const updateReceiver = await User.findByIdAndUpdate(receiver._id, {$push: {friends: sender}})
-    const deleteRequest = await FriendRequest.findByIdAndDelete(req.params.requestId)
+    // const updateSender = await User.findByIdAndUpdate(sender._id, {$push: {friends: receiver}})
+    // const updateReceiver = await User.findByIdAndUpdate(receiver._id, {$push: {friends: sender}})
+    // const deleteRequest = await FriendRequest.findByIdAndDelete(req.params.requestId)
     res.status(200).json({message: 'Friend request accepted'})
 })
 
@@ -82,7 +82,7 @@ const declineFriendRequest = asyncHandler( async (req,res) => {
         return
     }
 
-    const deleteRequest = await FriendRequest.findByIdAndDelete(req.params.requestId)
+    const updateRequest = await FriendRequest.findByIdAndUpdate(req.params.requestId, {status: 'declined'})
     res.status(200).json({message: 'Friend request declined'})
 })
 
@@ -96,9 +96,23 @@ const cancelFriendRequest = asyncHandler( async (req,res) => {
         return
     }
 
-    res.status(200).json({message: 'Friend request declined'})
+    const updateRequest = await FriendRequest.findByIdAndUpdate(req.params.requestId, {status: 'cancelled'})
+
+    res.status(200).json({message: 'Friend request cancelled'})
+})
+
+//*unfriend
+const unfriend = asyncHandler( async (req,res) => {
+    const request = await FriendRequest.findById(req.params.requestId)
+    const sender = request.from
+    const receiver = request.to
+    if (req.user.id != receiver._id || req.user.id != sender._id) { //if authenticated user is not receiver nor sender
+        res.status(400).json({message: 'You are not authorized to access this resource'})
+        return
+    }
+    const updateRequest = await FriendRequest.findByIdAndUpdate(req.params.requestId, {status: 'unfriended'})
 })
 
 module.exports = {
-    sendFriendRequest, acceptFriendRequest, declineFriendRequest, getReceived, getSent, getRequest, cancelFriendRequest
+    sendFriendRequest, acceptFriendRequest, declineFriendRequest, getReceived, getSent, getRequest, cancelFriendRequest, unfriend
 }
