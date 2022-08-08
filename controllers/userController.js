@@ -98,6 +98,24 @@ const getUser = asyncHandler( async (req,res) => {
         const user = await User.findById(req.params.userId).select({password:0, createdAt:0, updatedAt:0, email:0, role:0})
         res.status(200).json(user)
     }
+
+//* alternative check if a friend
+//  const isFriend = await FriendRequest.find(
+//     {$or: [{to: req.params.userId, from: req.user._id, status:'accepted'}, {from: req.params.userId, to: req.user._id, status:'accepted'}]}
+// )
+
+// if (!isFriend) {
+//     console.log('not a friend')
+//     const user = await User.findById(req.params.userId).select({name_first:1, name_last:1, profile_pic:1})  
+//     res.status(200).json(user)
+//     return
+// }    
+//  else {
+//     const user = await User.findById(req.params.userId).select({password:0, createdAt:0, updatedAt:0, email:0, role:0, gender: 0})
+//     res.status(200).json(user)
+// }
+
+
 })
 
 const userUpdate = () => {
