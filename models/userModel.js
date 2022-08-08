@@ -29,6 +29,9 @@ const userSchema = mongoose.Schema({
         type: String,
 
     },
+    friends: [
+        { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+    ],
     posts: [
         { type: mongoose.Schema.Types.ObjectId, ref: 'Post' }
     ],   
