@@ -15,7 +15,7 @@ const friendRequestSchema = mongoose.Schema({
         type: String,
         required: true, 
         default: 'pending',
-        enum: ['pending', 'accepted', 'declined'],
+        enum: ['pending', 'accepted', 'declined',],
     }
 },
 {

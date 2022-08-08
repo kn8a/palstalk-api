@@ -3,7 +3,7 @@ const { route } = require('.');
 var router = express.Router();
 const { protect } = require('../middleware/authMiddleware')
 const {userRegister, userLogin, userUpdate, getMe, getUser} = require('../controllers/userController')
-const { sendFriendRequest, getReceived, getSent, getRequest, acceptFriendRequest, declineFriendRequest, deleteFriendRequest} = require('../controllers/friendRequestController')
+const { sendFriendRequest, getReceived, getSent, getRequest, acceptFriendRequest, declineFriendRequest, cancelFriendRequest} = require('../controllers/friendRequestController')
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
