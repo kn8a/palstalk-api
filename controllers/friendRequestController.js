@@ -34,15 +34,15 @@ const sendFriendRequest = asyncHandler( async (req,res) => {
     res.status(200).json({message: 'Friend request submitted'})
 })
 
-//* get received
+//* get received requests
 const getReceived = asyncHandler( async (req,res) => {
-    const requests = await FriendRequest.find({to:{_id:req.user._id}})
+    const requests = await FriendRequest.find({to:{_id:req.user._id, status:'pending'}})
     res.status(200).json(requests)
 })
 
-//* get sent
+//* get sent requests
 const getSent = asyncHandler( async (req,res) => {
-    const requests = await FriendRequest.find({from:{_id:req.user._id}})
+    const requests = await FriendRequest.find({from:{_id:req.user._id, status:'pending'}})
 })
 
 //*get single request
@@ -66,8 +66,8 @@ const acceptFriendRequest = asyncHandler( async (req,res) => {
         return
     }
     const updateRequest = await FriendRequest.findByIdAndUpdate(req.params.requestId, {status: 'accepted'})
-    // const updateSender = await User.findByIdAndUpdate(sender._id, {$push: {friends: receiver}})
-    // const updateReceiver = await User.findByIdAndUpdate(receiver._id, {$push: {friends: sender}})
+    const updateSender = await User.findByIdAndUpdate(sender._id, {$push: {friends: receiver}})
+    const updateReceiver = await User.findByIdAndUpdate(receiver._id, {$push: {friends: sender}})
     // const deleteRequest = await FriendRequest.findByIdAndDelete(req.params.requestId)
     res.status(200).json({message: 'Friend request accepted'})
 })
