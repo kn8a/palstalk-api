@@ -4,18 +4,18 @@ const commentSchema = mongoose.Schema(
     {
         comment: {
             type: String,
-            required: [true, 'Comment is empty']
+            required: [true, 'Comment cannot be empty empty']
         },
         author: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
         },
-        likes: { 
-            type: Array
-        },
-        reports: { 
-            type: Array
-        },
+        likes: [
+            { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+        ],   
+        reports: [
+            { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+        ],   
         postId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Post'

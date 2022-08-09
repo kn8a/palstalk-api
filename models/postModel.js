@@ -12,9 +12,15 @@ const postSchema = mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
         },
-        likes: { type: Array },
-        comments: { type: Array },
-        reports: { type: Array }
+        likes: [
+            { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+        ],   
+        comments: [
+            { type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }
+        ],   
+        reports: [
+            { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+        ],   
     },
     {
         timestamps: true
