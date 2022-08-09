@@ -111,6 +111,9 @@ const unfriend = asyncHandler( async (req,res) => {
         return
     }
     const updateRequest = await FriendRequest.findByIdAndUpdate(req.params.requestId, {status: 'unfriended'})
+    const updateSender = await User.findByIdAndUpdate(sender._id, {$pull: {friends: receiver}})
+    const updateReceiver = await User.findByIdAndUpdate(receiver._id, {$pull: {friends: sender}})
+
     res.status(200).json({message: 'Unfriended successfully'})
 })
 
