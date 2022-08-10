@@ -19,7 +19,14 @@ const commentSchema = mongoose.Schema(
         postId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Post'
-        }
+        },
+        status: {
+            type: String,
+            required: true, 
+            default: 'active',
+            enum: ['active', 'reported']
+        }, 
+        is_edited: {type: Boolean, default: false, timestamps: true}
     },
     {
         timestamps: true

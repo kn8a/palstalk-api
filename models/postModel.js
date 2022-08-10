@@ -20,7 +20,14 @@ const postSchema = mongoose.Schema(
         ],   
         reports: [
             { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
-        ],   
+        ], 
+        status: {
+            type: String,
+            required: true, 
+            default: 'active',
+            enum: ['active', 'reported']
+        }, 
+        is_edited: {type: Boolean, default: false, timestamps: true}
     },
     {
         timestamps: true
