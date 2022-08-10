@@ -20,14 +20,9 @@ const postSchema = mongoose.Schema(
         ],   
         reports: [
             { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
-        ], 
-        status: {
-            type: String,
-            required: true, 
-            default: 'active',
-            enum: ['active', 'reported']
-        }, 
-        is_edited: {type: Boolean, default: false, timestamps: true}
+        ],  
+        is_edited: {type: Boolean, default: false, timestamps: true},
+        is_reported: {type: Boolean, default: false, timestamps: true} //true if reports array is length of 10
     },
     {
         timestamps: true

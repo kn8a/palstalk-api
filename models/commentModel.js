@@ -20,12 +20,7 @@ const commentSchema = mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Post'
         },
-        status: {
-            type: String,
-            required: true, 
-            default: 'active',
-            enum: ['active', 'reported']
-        }, 
+        is_reported: {type: Boolean, default: false, timestamps: true}, //true if reports array is length of 10
         is_edited: {type: Boolean, default: false, timestamps: true}
     },
     {
