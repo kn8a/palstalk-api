@@ -28,7 +28,7 @@ const editPost = asyncHandler( async (req,res) => {
     if (post.author.toString() !== req.user.id) {
         res.status(401).json({ error: 'Not authorized to edit'})
     } 
-    
+    req.body.isEdited = true
     const updatedPost = await Post.findByIdAndUpdate(req.params.postId, req.body, {
         new: true,
     })
@@ -52,17 +52,27 @@ const likePost = asyncHandler( async (req,res) => {
         await Post.findByIdAndUpdate(req.params.postId, {$pull: {likes: req.user._id}})
         res.status(200).json({message:'unliked'})
     }
-
 })
 
 
 //! report post
 const reportPost = asyncHandler( async (req,res) => {
-    
+    const post = await Post.findById(req.params.postId)
+    const alreadyReported = await post.reports.findIndex(id => (id.toString() == req.user._id))
+    if (alreadyReported == -1) {
+        await Post.findByIdAndUpdate(req.params.postId, {$push: {reports: req.user._id}})
+        if (post.reports.length = 9) { 
+            await Post.findByIdAndUpdate(req.params.postId, {is_reported: true})
+        }
+        res.status(200).json({message:'Post reported'})
+    } else {
+        res.status(200).json({message:'You already reported this post'})
+    }
 })
 
 //! Create post
 const getPost = asyncHandler( async (req,res) => {
+    
     
 })
 

@@ -7,6 +7,9 @@ const {createPost, getPost, editPost, deletePost, likePost, reportPost} = requir
 router.post('/', protect, createPost)
 router.put('/:postId', protect, editPost)
 router.put('/:postId/like', protect, likePost)
+router.put('/:postId/report', protect, reportPost)
+
+
 
 
 module.exports = router;
