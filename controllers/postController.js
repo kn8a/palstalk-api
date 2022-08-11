@@ -20,7 +20,7 @@ const createPost = asyncHandler( async (req,res) => {
 const editPost = asyncHandler( async (req,res) => {
     const post = await Post.findById(req.params.postId)
     if (!post) {
-        res.status(400).json({ error: 'Blog post not found'})
+        res.status(400).json({ error: 'Post not found'})
     } 
     if (!req.user) {
         res.status(401).json({ error: 'Not authorized to edit'}) 

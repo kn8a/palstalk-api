@@ -10,7 +10,13 @@ const getCommentsForPost = asyncHandler( async (req,res) => {
 
 //^ create a single comment to blog-post
 const createComment = asyncHandler( async (req,res) => {
-    
+    const comment = await Comment.create({
+        comment: req.body.comment,
+        author: req.user._id,
+        postId: req.params.postId
+    })
+    await Post.findByIdAndUpdate({_id: req.params.postId}, {$push: {comments: comment._id}})
+    res.status(200).json(comment)
 })
 
 //^ comment edit - add "isEdited" field to model - only author
@@ -25,17 +31,41 @@ const deleteComment = asyncHandler( async (req,res) => {
 
 //^ comment like
 const likeComment = asyncHandler( async (req,res) => {
-    
+    const comment = await Comment.findById(req.params.commentId)
+    const alreadyLiked = await comment.likes.findIndex(id => (id.toString() == req.user._id))
+    if (alreadyLiked == -1) {
+        await Comment.findByIdAndUpdate(req.params.commentId, {$push: {likes: req.user._id}})
+        res.status(200).json({message:'Comment liked'})
+    } else {
+        res.status(200).json({message:'You already liked this comment'})
+    }
 })
 
 //^ comment unlike
 const unlikeComment = asyncHandler( async (req,res) => {
-    
+    const comment = await Comment.findById(req.params.commentId)
+    const alreadyLiked = await comment.likes.findIndex(id => (id.toString() == req.user._id))
+    if (alreadyLiked == -1) { //if not already liked
+        res.status(200).json({message:`You haven't liked this comment`})
+    } else {
+        await Comment.findByIdAndUpdate(req.params.commentId, {$pull: {likes: req.user._id}})
+        res.status(200).json({message:'Unliked comment'})
+    }
 })
 
 //^ report comment
 const reportComment = asyncHandler( async (req,res) => {
-    
+    const comment = await Comment.findById(req.params.commentId)
+    const alreadyReported = await comment.reports.findIndex(id => (id.toString() == req.user._id))
+    if (alreadyReported == -1) {
+        await Comment.findByIdAndUpdate(req.params.commentId, {$push: {reports: req.user._id}})
+        if (comment.reports.length = 9) { 
+            await Comment.findByIdAndUpdate(req.params.commentId, {is_reported: true})
+        }
+        res.status(200).json({message:'Comment reported'})
+    } else {
+        res.status(200).json({message:'You already reported this comment'})
+    }
 })
 
 

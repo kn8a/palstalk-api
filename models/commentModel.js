@@ -4,7 +4,7 @@ const commentSchema = mongoose.Schema(
     {
         comment: {
             type: String,
-            required: [true, 'Comment cannot be empty empty']
+            required: [true, 'Comment cannot be empty']
         },
         author: {
             type: mongoose.Schema.Types.ObjectId,
