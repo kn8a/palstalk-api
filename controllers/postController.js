@@ -49,6 +49,16 @@ const likePost = asyncHandler( async (req,res) => {
         await Post.findByIdAndUpdate(req.params.postId, {$push: {likes: req.user._id}})
         res.status(200).json({message:'liked'})
     } else {
+        res.status(200).json({message:'You already liked this post'})
+    }
+})
+
+const unlikePost = asyncHandler( async (req,res) => {
+    const post = await Post.findById(req.params.postId)
+    const alreadyLiked = await post.likes.findIndex(id => (id.toString() == req.user._id))
+    if (alreadyLiked == -1) { //if not already liked
+        res.status(200).json({message:`You haven't liked this post`})
+    } else {
         await Post.findByIdAndUpdate(req.params.postId, {$pull: {likes: req.user._id}})
         res.status(200).json({message:'unliked'})
     }
@@ -77,5 +87,5 @@ const getPost = asyncHandler( async (req,res) => {
 })
 
 module.exports = {
-    createPost, editPost, deletePost, likePost, reportPost, getPost
+    createPost, editPost, deletePost, likePost, reportPost, getPost, unlikePost
 }
