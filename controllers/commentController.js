@@ -21,7 +21,21 @@ const createComment = asyncHandler( async (req,res) => {
 
 //^ comment edit - add "isEdited" field to model - only author
 const editComment = asyncHandler( async (req,res) => {
-    
+    const comment = await Comment.findById(req.params.commentId)
+    if (!comment) {
+        res.status(400).json({ error: 'Comment not found'})
+    } 
+    if (!req.user) {
+        res.status(401).json({ error: 'Not authorized to edit'}) 
+    }
+    if (comment.author.toString() !== req.user._id) {
+        res.status(401).json({ error: 'Not authorized to edit'})
+    } 
+    req.body.isEdited = true
+    const updatedComment = await Comment.findByIdAndUpdate(req.params.postId, req.body, {
+        new: true,
+    })
+    res.status(200).json(updatedComment)  
 })
 
 //^ delete a comment 

@@ -25,7 +25,7 @@ const editPost = asyncHandler( async (req,res) => {
     if (!req.user) {
         res.status(401).json({ error: 'Not authorized to edit'}) 
     }
-    if (post.author.toString() !== req.user.id) {
+    if (post.author.toString() !== req.user._id) {
         res.status(401).json({ error: 'Not authorized to edit'})
     } 
     req.body.isEdited = true
