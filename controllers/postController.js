@@ -80,12 +80,42 @@ const reportPost = asyncHandler( async (req,res) => {
     }
 })
 
-//! Create post
+//! Get post
 const getPost = asyncHandler( async (req,res) => {
     
     
 })
 
+//! Get post
+const getBoard = asyncHandler( async (req,res) => {
+    let meAndFriends = req.user.friends
+    meAndFriends.push(req.user._id)
+    const boardPosts = await Post.find({"author":  { $in: meAndFriends}, "is_reported": false})
+    .populate("comments")
+    .populate({path: 'author', select:{name_first: 1, name_last:1, profile_pic:1} })
+    .populate({path: "comments",
+      populate: { path: "author", select:{name_first: 1, name_last:1, profile_pic:1}
+      }
+    })
+    .sort("-createdAt")
+    res.status(200).json(boardPosts)
+
+    // const postsFromUser = await User.findById(req.user._id)
+    //     .populate({path: 'posts', populate: {path}})
+})
+
+//! Get my posts
+const getMyPosts = asyncHandler( async (req,res) => {
+    const myPosts = await Post.find({'author': req.user._id})
+    .populate("comments")
+    .populate({path: 'author', select:{name_first: 1, name_last:1, profile_pic:1} })
+    .populate({path: "comments", populate: { path: "author", select:{name_first: 1, name_last:1, profile_pic:1}}
+    })
+    .sort("-createdAt")
+    
+    res.status(200).json(myPosts)
+})
+    
 module.exports = {
-    createPost, editPost, deletePost, likePost, reportPost, getPost, unlikePost
+    createPost, editPost, deletePost, likePost, reportPost, getPost, unlikePost, getBoard, getMyPosts
 }

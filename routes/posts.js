@@ -2,7 +2,7 @@ var express = require('express');
 const { route } = require('.');
 const { protect } = require('../middleware/authMiddleware');
 var router = express.Router();
-const {createPost, getPost, editPost, deletePost, likePost, reportPost, unlikePost} = require('../controllers/postController')
+const {createPost, getPost, getBoard, editPost, deletePost, getMyPosts, likePost, reportPost, unlikePost} = require('../controllers/postController')
 const {getCommentsForPost, createComment, editComment, likeComment, unlikeComment, reportComment, deleteComment} = require('../controllers/commentController')
 
 router.post('/', protect, createPost)
@@ -20,5 +20,10 @@ router.put('/:postId/:commentId/unlike', protect, unlikeComment)
 router.put('/:postId/:commentId/report', protect, reportComment)
 
 router.delete('/:postId/:commentId/delete', protect, deleteComment)
+
+router.get('/board', protect, getBoard) //recent posts from user and friends
+
+router.get('/my_posts', protect, getMyPosts) //recent posts from user and friends
+
 
 module.exports = router;
