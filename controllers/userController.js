@@ -19,7 +19,7 @@ const userRegister = asyncHandler( async (req,res) => {
     }
 
     if (password != confirm_password) {
-        res.status(400).json({message: `Password and confirmation password don't match`})
+        res.status(400).json({message: `Passwords don't match. Please retry.`})
         return
     }
 
@@ -43,7 +43,7 @@ const userRegister = asyncHandler( async (req,res) => {
     })
 
     if (newUser) {
-        res.status(200).json({message: 'User created'})
+        res.status(200).json({message: 'Profile created successfully'})
     }
 })
 

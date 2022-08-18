@@ -43,6 +43,7 @@ const deletePost = asyncHandler( async (req,res) => {
 //! like post
 
 const likePost = asyncHandler( async (req,res) => {
+
     const post = await Post.findById(req.params.postId)
     const alreadyLiked = await post.likes.findIndex(id => (id.toString() == req.user._id))
     if (alreadyLiked == -1) {
@@ -82,8 +83,19 @@ const reportPost = asyncHandler( async (req,res) => {
 
 //! Get post
 const getPost = asyncHandler( async (req,res) => {
-    
-    
+    const post = await Post.findById(req.params.postId).populate("comments")
+    .populate({path: 'author', select:{name_first: 1, name_last:1, profile_pic:1} })
+    .populate({path: "comments", populate: { path: "author", select:{name_first: 1, name_last:1, profile_pic:1}}
+    })
+    console.log(req.user.friends, post.author._id, req.user._id)
+    const authorIsFriend = req.user.friends.indexOf(post.author._id)
+
+    if (authorIsFriend != -1 || post.author._id.toString() == req.user._id.toString()) {
+        res.status(200).json(post)
+        
+        return
+    }
+    res.status(401).json({message: 'You are not authorized to access this resource'})
 })
 
 //! Get post
