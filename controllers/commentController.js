@@ -22,6 +22,27 @@ const getCommentsForPost = asyncHandler( async (req,res) => {
     res.status(401).json({message: 'You are not authorized to access this resource'})
 })
 
+//^ get a single comment
+const getComment = asyncHandler( async (req,res) => {
+    const comment = await Comment.findById(req.params.commentId)
+    .populate({path: 'postId', select:{author: 1}})
+
+    const post = comment.postId
+
+
+    const authorIsFriend = req.user.friends.indexOf(post.author._id)
+    if (authorIsFriend != -1 || post.author._id.toString() == req.user._id.toString()) {
+        
+        res.status(200).json(comment)
+        
+        return
+    }
+    res.status(401).json({message: 'You are not authorized to access this resource'})
+})
+
+
+
+
 //^ create a single comment to blog-post
 const createComment = asyncHandler( async (req,res) => {
     const comment = await Comment.create({
@@ -98,5 +119,5 @@ const reportComment = asyncHandler( async (req,res) => {
 
 
 module.exports = {
-    getCommentsForPost, createComment, editComment, likeComment, unlikeComment, reportComment, deleteComment
+    getCommentsForPost, getComment, createComment, editComment, likeComment, unlikeComment, reportComment, deleteComment
 }
