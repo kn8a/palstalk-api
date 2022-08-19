@@ -5,7 +5,21 @@ const asyncHandler = require('express-async-handler')
 
 //^ get all comments for post - viewer/admin
 const getCommentsForPost = asyncHandler( async (req,res) => {
-    
+    const post = await Post.findById(req.params.postId)
+    .populate({path: "comments",
+    populate: { path: "author", select:{name_first: 1, name_last:1, profile_pic:1}
+    }
+  })
+  .sort("createdAt")
+
+  const authorIsFriend = req.user.friends.indexOf(post.author._id)
+    if (authorIsFriend != -1 || post.author._id.toString() == req.user._id.toString()) {
+        const comments = post.comments
+        res.status(200).json(comments)
+        
+        return
+    }
+    res.status(401).json({message: 'You are not authorized to access this resource'})
 })
 
 //^ create a single comment to blog-post
