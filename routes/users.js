@@ -18,6 +18,4 @@ router.get('/:userId', protect, getUser)
 router.post('/:userId/send-friend-request', protect, sendFriendRequest)
 router.post('/:userId/unfriend', protect, unfriend)
 
-
-
 module.exports = router;
