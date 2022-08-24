@@ -30,7 +30,6 @@ const sendFriendRequest = asyncHandler( async (req,res) => {
         to,
         from
     })
-
     res.status(200).json({message: 'Friend request submitted'})
 })
 
