@@ -3,6 +3,7 @@ const asyncHandler = require('express-async-handler')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 var createError = require('http-errors');
+const { populate } = require('../models/userModel');
 
 //jwt token generator
 const genToken = (id) =>{
@@ -72,10 +73,37 @@ const userLogin = asyncHandler( async (req,res) => {
 
 const getMe = asyncHandler( async (req,res) => {
     console.log(req.user._id)
-    const user = await User.findById(req.user._id)
+    const user = await User.findById(req.user._id).populate({path: 'friends', select:{name_first: 1, name_last:1, profile_pic:1}})
     res.status(200) //ok
     res.json(user)
 })
+
+const getAllUsers = asyncHandler( async (req,res) => {
+    const users = await User.find({}).select({name_first:1, name_last:1, profile_pic:1})
+    //console.log(users)
+    let filteredUsers = users.map((user)=> {
+        const isFriend = req.user.friends.indexOf(user._id.toString())
+        if (isFriend == -1) {
+            return ({
+                _id: user._id,
+                name_first: user.name_first, 
+                name_last:user.name_last, 
+                profile_pic:user.profile_pic, 
+                friend: false
+            })
+        } else {
+            return ({
+                _id: user._id,
+                name_first: user.name_first, 
+                name_last:user.name_last, 
+                profile_pic:user.profile_pic, 
+                friend: true
+            })
+        }
+    })
+    res.status(200).json(filteredUsers)
+})
+
 
 const getUser = asyncHandler( async (req,res) => {
     //check if user ID is valid
@@ -127,5 +155,5 @@ const userUpdate = () => {
 
 
 module.exports = {
-    userRegister, getMe, userLogin, userUpdate, getUser
+    userRegister, getMe, getAllUsers, userLogin, userUpdate, getUser
 }

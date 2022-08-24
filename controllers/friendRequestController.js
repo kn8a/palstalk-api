@@ -150,6 +150,23 @@ const unfriend = asyncHandler( async (req,res) => {
     res.status(200).json({message: 'Unfriended successfully'})
 })
 
+const unfriendById = asyncHandler(async (req,res) => {
+
+    const userToUnfriend = req.params.userId
+    const userIsFriend = req.user.friends.indexOf(userToUnfriend.toString())
+    if (userIsFriend == -1) {
+        res.status(400).json({message: "Can't unfriend someone who is not your friend"})
+    } else {
+        const updateMe = await User.findByIdAndUpdate(req.user._id, {$pull: {friends: userToUnfriend}})
+        const updateThem = await User.findByIdAndUpdate(userToUnfriend, {$pull: {friends: req.user._id}})
+        await FriendRequest.findOneAndUpdate({$or:[
+            {to: userToUnfriend, from: req.user._id},
+            {to: req.user._id, from: userToUnfriend}
+        ]}, {status: 'unfriended'})
+        res.status(200).json({message: 'Unfriended successfully'})
+    }
+})
+
 module.exports = {
-    sendFriendRequest, acceptFriendRequest, declineFriendRequest, getReceived, getSent, getRequest, cancelFriendRequest, unfriend
+    sendFriendRequest, unfriendById, acceptFriendRequest, declineFriendRequest, getReceived, getSent, getRequest, cancelFriendRequest, unfriend
 }
