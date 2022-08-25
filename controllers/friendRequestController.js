@@ -11,13 +11,13 @@ const sendFriendRequest = asyncHandler( async (req,res) => {
     }
 
     //check if pending request already exists
-    const requestExists = await FriendRequest.find({from:{_id:req.user._id}, to:{_id:req.params.userId}, status:'pending'}).count()
+    const requestExists = await FriendRequest.find({from:req.user._id, to:req.params.userId, status:'pending'}).count()
         if (requestExists > 0) { 
             res.status(400).json({message: 'Pending friend request already exists'})
             return
         }
 
-    const reverseRequestExists = await FriendRequest.find({from:{_id:req.params.userId}, to:{_id:req.user._id}, status:'pending'}).count()
+    const reverseRequestExists = await FriendRequest.find({from:req.params.userId, to:req.user._id, status:'pending'}).count()
         if (reverseRequestExists > 0) { 
             res.status(400).json({message: 'You already have a pending request from this user'})
             return
@@ -30,18 +30,23 @@ const sendFriendRequest = asyncHandler( async (req,res) => {
         to,
         from
     })
+    //add pending requests to users
+    const updateSender = await User.findByIdAndUpdate(from._id, {$push: {pending_requests: newRequest._id}})
+    const updateReceiver = await User.findByIdAndUpdate(to._id, {$push: {pending_requests: newRequest._id}})
+
     res.status(200).json({message: 'Friend request submitted'})
 })
 
 //* get received requests
 const getReceived = asyncHandler( async (req,res) => {
-    const requests = await FriendRequest.find({to:{_id:req.user._id, status:'pending'}}).populate({path: 'from', select:{name_first: 1, name_last:1, profile_pic:1} })
+    const requests = await FriendRequest.find({to:req.user._id, status:'pending'}).populate({path: 'from', select:{name_first: 1, name_last:1, profile_pic:1} })
     res.status(200).json(requests)
 })
 
 //* get sent requests
 const getSent = asyncHandler( async (req,res) => {
-    const requests = await FriendRequest.find({from:{_id:req.user._id, status:'pending'}}).populate({path: 'to', select:{name_first: 1, name_last:1, profile_pic:1} })
+    const requests = await FriendRequest.find({from:req.user._id, status:'pending'}).populate({path: 'to', select:{name_first: 1, name_last:1, profile_pic:1} })
+    res.status(200).json(requests)
 })
 
 //*get single request
@@ -60,9 +65,11 @@ const acceptFriendRequest = asyncHandler( async (req,res) => {
     const request = await FriendRequest.findById(req.params.requestId)
     if (request.status == 'accepted') {
         res.status(400).json({message: 'This request was already accepted'})
+        return
     }
     if (request.status == 'declined') {
         res.status(400).json({message: 'This request has already been declined'})
+        return
     }
     const sender = request.from
     const receiver = request.to
@@ -71,8 +78,8 @@ const acceptFriendRequest = asyncHandler( async (req,res) => {
         return
     }
     const updateRequest = await FriendRequest.findByIdAndUpdate(req.params.requestId, {status: 'accepted'})
-    const updateSender = await User.findByIdAndUpdate(sender._id, {$push: {friends: receiver}})
-    const updateReceiver = await User.findByIdAndUpdate(receiver._id, {$push: {friends: sender}})
+    const updateSender = await User.findByIdAndUpdate(sender._id, {$push: {friends: receiver}, $pull: {pending_requests:request._id}})
+    const updateReceiver = await User.findByIdAndUpdate(receiver._id, {$push: {friends: sender}, $pull: {pending_requests:request._id}})
     // const deleteRequest = await FriendRequest.findByIdAndDelete(req.params.requestId)
     res.status(200).json({message: 'Friend request accepted'})
 })
@@ -89,12 +96,15 @@ const declineFriendRequest = asyncHandler( async (req,res) => {
     }
     
     const receiver = request.to
+    const sender = request.from
     if (req.user.id != receiver._id) { //if receiver is not the authenticated user
         res.status(400).json({message: 'Unauthorized action'})
         return
     }
 
     const updateRequest = await FriendRequest.findByIdAndUpdate(req.params.requestId, {status: 'declined'})
+    const updateSender = await User.findByIdAndUpdate(sender._id,  {$pull: {pending_requests:request._id}})
+    const updateReceiver = await User.findByIdAndUpdate(receiver._id, {$pull: {pending_requests:request._id}})
     res.status(200).json({message: 'Friend request declined'})
 })
 
@@ -113,13 +123,15 @@ const cancelFriendRequest = asyncHandler( async (req,res) => {
     }
 
     const sender = request.from
+    const receiver = request.to
     if (req.user.id != sender._id) { //if sender is not the authenticated user
         res.status(400).json({message: 'Unauthorized action'})
         return
     }
 
     const updateRequest = await FriendRequest.findByIdAndUpdate(req.params.requestId, {status: 'cancelled'})
-
+    const updateSender = await User.findByIdAndUpdate(sender._id, {$pull: {pending_requests:request._id}})
+    const updateReceiver = await User.findByIdAndUpdate(receiver._id, {$pull: {pending_requests:request._id}})
     res.status(200).json({message: 'Friend request cancelled'})
 })
 

@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 var createError = require('http-errors');
 const { populate } = require('../models/userModel');
+const FriendRequest = require('../models/friendRequestModel')
 
 //jwt token generator
 const genToken = (id) =>{
@@ -79,29 +80,14 @@ const getMe = asyncHandler( async (req,res) => {
 })
 
 const getAllUsers = asyncHandler( async (req,res) => {
-    const users = await User.find({}).select({name_first:1, name_last:1, profile_pic:1})
-    //console.log(users)
-    let filteredUsers = users.map((user)=> {
-        const isFriend = req.user.friends.indexOf(user._id.toString())
-        if (isFriend == -1) {
-            return ({
-                _id: user._id,
-                name_first: user.name_first, 
-                name_last:user.name_last, 
-                profile_pic:user.profile_pic, 
-                friend: false
-            })
-        } else {
-            return ({
-                _id: user._id,
-                name_first: user.name_first, 
-                name_last:user.name_last, 
-                profile_pic:user.profile_pic, 
-                friend: true
-            })
-        }
-    })
-    res.status(200).json(filteredUsers)
+    const myRequests = req.user.pending_requests
+    
+    //get users which have a friend request with me
+    const pendingUsers = await User.find({_id:{$ne:[req.user._id]},pending_requests: {$elemMatch: {$in:[...myRequests]}}}).select({name_first:1, name_last:1, profile_pic:1})
+    //get users which are not my friends and dont have a pending friend request with me
+    const users = await User.find({_id:{$ne:req.user._id}, pending_requests:{$nin:[...myRequests]}, friends:{$nin:[req.user._id]}}).select({name_first:1, name_last:1, profile_pic:1}).sort()
+    
+    res.status(200).json({pending:pendingUsers, others:users})
 })
 
 

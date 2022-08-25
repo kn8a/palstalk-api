@@ -21,16 +21,21 @@ const userSchema = mongoose.Schema({
     bio: {
         type: String
     },
+    location: {
+        type: String
+    },
     password: {
         type: String,
         required: [true, 'Please add a password'],    
     },
     profile_pic: {
         type: String,
-
     },
     friends: [
         { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+    ],
+    pending_requests: [
+        { type: mongoose.Schema.Types.ObjectId, ref: 'FriendRequest'}
     ],
     posts: [
         { type: mongoose.Schema.Types.ObjectId, ref: 'Post' }
@@ -39,7 +44,7 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true, 
         default: 'user',
-        enum: ['user', 'admin'],
+        enum: ['user', 'admin', 'dev'],
     }
 },
 {
