@@ -68,6 +68,9 @@ const userLogin = asyncHandler( async (req,res) => {
             token: genToken(user.id),
             profile_pic: user.profile_pic
         })
+        return
+    } else {
+        res.status(400).json({message: 'Invalid credential'})
     }
 
 })
@@ -93,27 +96,32 @@ const getAllUsers = asyncHandler( async (req,res) => {
 
 const getUser = asyncHandler( async (req,res) => {
     //check if user ID is valid
-    if (!req.params.userId.match(/^[0-9a-fA-F]{24}$/)) {
-        // Not a valid ObjectId
-        res.status(404).json({message: 'invalid user ID'})
-        return
-    }    
+    // if (!req.params.userId.match(/^[0-9a-fA-F]{24}$/)) {
+    //     // Not a valid ObjectId
+    //     res.status(404).json({message: 'invalid user ID'})
+    //     return
+    // }    
     //check if user ID exists
-    const userExists = await User.find({_id: req.params.userId}).count()
-        if (userExists == 0) { 
+    const user = await User.findById(req.params.userId)
+        if (!user) { 
             res.status(404).json({message: 'user not found'})
             return
         }
     //check if a friend
-    if (!req.user.friends.find(friend => friend._id == req.params.userId)) {
-        console.log('not a friend')
-        const user = await User.findById(req.params.userId).select({name_first:1, name_last:1, profile_pic:1})  
-        res.status(200).json(user)
+    const userIsFriend = req.user.friends.indexOf(user._id.toString())
+    if (userIsFriend == -1) {
+        const userToSend = await User.findById(req.params.userId).select({name_first:1, name_last:1, profile_pic:1, friends:1})
+        .populate({path: 'friends', select:{name_first: 1, name_last:1, profile_pic:1}})
+        res.status(200).json({user: userToSend, friend: false})
         return
     } else {
-        const user = await User.findById(req.params.userId).select({password:0, createdAt:0, updatedAt:0, email:0, role:0})
-        res.status(200).json(user)
-    }
+        const userToSend = await User.findById(req.params.userId).select({password:0, pending_requests:0, email:0})
+        .populate({path: 'friends', select:{name_first: 1, name_last:1, profile_pic:1}})
+        .populate("posts")
+        res.status(200).json({user: userToSend, friend: true})
+        return
+    }   
+    
 
 //* alternative check if a friend
 //  const isFriend = await FriendRequest.find(
