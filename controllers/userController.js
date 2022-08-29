@@ -11,6 +11,7 @@ const genToken = (id) =>{
     return jwt.sign({id}, process.env.JWT_SECRET, {expiresIn: '30d'})
 }
 
+//* User Registration
 const userRegister = asyncHandler( async (req,res) => {
     console.log(req.body)
     const {name_first, name_last, email, password, confirm_password, gender} = req.body
@@ -49,6 +50,8 @@ const userRegister = asyncHandler( async (req,res) => {
     }
 })
 
+
+//*User login
 const userLogin = asyncHandler( async (req,res) => {
     
     const {email, password} = req.body
@@ -77,9 +80,11 @@ const userLogin = asyncHandler( async (req,res) => {
 
 const getMe = asyncHandler( async (req,res) => {
     console.log(req.user._id)
-    const user = await User.findById(req.user._id).populate({path: 'friends', select:{name_first: 1, name_last:1, profile_pic:1}})
-    res.status(200) //ok
-    res.json(user)
+    const user = await User.findById(req.user._id)
+    .populate({path: 'friends', select:{name_first: 1, name_last:1, profile_pic:1}})
+    .populate('posts')
+    .select({password:0})
+    res.status(200).json(user)
 })
 
 const getAllUsers = asyncHandler( async (req,res) => {
