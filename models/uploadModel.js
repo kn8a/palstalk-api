@@ -13,6 +13,8 @@ const UploadSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  user: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+  post: {type: mongoose.Schema.Types.ObjectId, ref: 'Post'}
 });
 
-module.exports = Upload = mongoose.model("upload", UploadSchema);
+module.exports = Upload = mongoose.model("Upload", UploadSchema);

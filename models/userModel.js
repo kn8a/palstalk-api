@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const { stringify } = require('uuid')
 
 const userSchema = mongoose.Schema({
     name_first: {
@@ -29,7 +30,7 @@ const userSchema = mongoose.Schema({
         required: [true, 'Please add a password'],    
     },
     profile_pic: {
-        type: String,
+        type: String, default: '/api/file/630dc2552f6866ee7ec33221'
     },
     friends: [
         { type: mongoose.Schema.Types.ObjectId, ref: 'User' }

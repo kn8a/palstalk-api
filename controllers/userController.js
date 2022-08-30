@@ -5,11 +5,37 @@ const jwt = require('jsonwebtoken')
 var createError = require('http-errors');
 const { populate } = require('../models/userModel');
 const FriendRequest = require('../models/friendRequestModel')
+const multer = require('multer')
+//setting options for multer
+const storage = multer.memoryStorage();
+
+const Upload = require('../models/uploadModel')
+const uuid = require('uuid')
 
 //jwt token generator
 const genToken = (id) =>{
     return jwt.sign({id}, process.env.JWT_SECRET, {expiresIn: '30d'})
 }
+
+const uploadProfilePic = asyncHandler( async (req,res) =>{
+        
+    console.log(req.file)
+    const newFile = {
+        fileName: uuid.v4(),
+        file: {
+            data: req.file.buffer,
+            contentType: req.file.mimetype,
+        },        
+        user: req.user._id
+    }
+    //console.log(newFile)
+    const uploaded = await Upload.create(newFile)
+    
+    const updateUserPic = await User.findByIdAndUpdate(req.user._id, {profile_pic: `/api/file/${uploaded._id.toString()}`})
+    console.log(updateUserPic)
+    res.status(200).json({message:'profile pic updated'})
+})
+
 
 //* User Registration
 const userRegister = asyncHandler( async (req,res) => {
@@ -154,5 +180,5 @@ const userUpdate = () => {
 
 
 module.exports = {
-    userRegister, getMe, getAllUsers, userLogin, userUpdate, getUser
+    userRegister, getMe, getAllUsers, userLogin, userUpdate, getUser, uploadProfilePic
 }
