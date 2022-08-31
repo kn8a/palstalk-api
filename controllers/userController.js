@@ -36,7 +36,6 @@ const uploadProfilePic = asyncHandler( async (req,res) =>{
     res.status(200).json({message:'profile pic updated'})
 })
 
-
 //* User Registration
 const userRegister = asyncHandler( async (req,res) => {
     console.log(req.body)
