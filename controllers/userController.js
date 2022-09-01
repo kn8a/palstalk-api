@@ -18,8 +18,9 @@ const genToken = (id) =>{
 }
 
 const uploadProfilePic = asyncHandler( async (req,res) =>{
-        
-    console.log(req.file)
+    
+    const PreviousPic = req.user.profile_pic //to be removed after update
+    //console.log(PreviousPic)
     const newFile = {
         fileName: uuid.v4(),
         file: {
@@ -31,9 +32,12 @@ const uploadProfilePic = asyncHandler( async (req,res) =>{
     //console.log(newFile)
     const uploaded = await Upload.create(newFile)
     
-    const updateUserPic = await User.findByIdAndUpdate(req.user._id, {profile_pic: `/api/file/${uploaded._id.toString()}`})
-    console.log(updateUserPic)
-    res.status(200).json({message:'profile pic updated'})
+    const updateUserPic = await User.findByIdAndUpdate(req.user._id, {profile_pic: `${uploaded._id.toString()}`})
+    if (PreviousPic != '630dc2552f6866ee7ec33221') {
+        await Upload.findByIdAndDelete(PreviousPic)
+    }
+    //console.log(updateUserPic)
+    res.status(200).json({message:'profile pic updated', fileId:uploaded._id.toString()})
 })
 
 //* User Registration
@@ -67,7 +71,7 @@ const userRegister = asyncHandler( async (req,res) => {
         email,
         password: hashedPass,
         gender,
-        profile_pic: `https://robohash.org/${name_first}-${name_last}.png`
+        profile_pic: `630dc2552f6866ee7ec33221`
     })
 
     if (newUser) {
