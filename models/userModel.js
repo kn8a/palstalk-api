@@ -20,10 +20,10 @@ const userSchema = mongoose.Schema({
         unique: true  
     },
     bio: {
-        type: String
+        type: String, default: ''
     },
     location: {
-        type: String
+        type: String, default: ''
     },
     password: {
         type: String,

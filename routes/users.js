@@ -24,6 +24,7 @@ router.get('/profile', protect, getMe)
 router.get('/all', protect, getAllUsers)
 router.get('/:userId', protect, getUser)
 router.post('/upload', protect, upload.single('profile_pic'), uploadProfilePic)
+router.put('/update', protect, userUpdate)
 
 router.post('/:userId/send-friend-request', protect, sendFriendRequest)
 router.put('/:userId/unfriend', protect, unfriendById)
