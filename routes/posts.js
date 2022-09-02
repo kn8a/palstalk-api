@@ -11,7 +11,7 @@ router.put('/:postId/like', protect, likePost)
 router.put('/:postId/unlike', protect, unlikePost)
 router.put('/:postId/report', protect, reportPost)
 
-
+router.get('/my_posts', protect, getMyPosts) //recent posts from user
 
 router.get('/:postId/comments', protect, getCommentsForPost)
 router.post('/:postId/comments', protect, createComment) 
@@ -27,7 +27,7 @@ router.delete('/:postId/:commentId/delete', protect, deleteComment)
 router.get('/board', protect, getBoard) //recent posts from user and friends
 router.get('/:postId', protect, getPost)
 
-router.get('/my_posts', protect, getMyPosts) //recent posts from user and friends
+
 
 
 module.exports = router;

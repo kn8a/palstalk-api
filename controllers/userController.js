@@ -42,7 +42,7 @@ const uploadProfilePic = asyncHandler( async (req,res) =>{
 
 //* User Registration
 const userRegister = asyncHandler( async (req,res) => {
-    console.log(req.body)
+    //console.log(req.body)
     const {name_first, name_last, email, password, confirm_password, gender} = req.body
 
     if (!name_first || !name_last || !email || !password || !confirm_password ||!gender) {
@@ -109,7 +109,7 @@ const userLogin = asyncHandler( async (req,res) => {
 
 //* get my profile
 const getMe = asyncHandler( async (req,res) => {
-    console.log(req.user._id)
+    //console.log(req.user._id)
     const user = await User.findById(req.user._id)
     .populate({path: 'friends', select:{name_first: 1, name_last:1, profile_pic:1}})
     .select({password:0})
