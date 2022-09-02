@@ -112,7 +112,6 @@ const getMe = asyncHandler( async (req,res) => {
     console.log(req.user._id)
     const user = await User.findById(req.user._id)
     .populate({path: 'friends', select:{name_first: 1, name_last:1, profile_pic:1}})
-    .populate('posts')
     .select({password:0})
     res.status(200).json(user)
 })
