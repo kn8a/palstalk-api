@@ -37,7 +37,17 @@ const editPost = asyncHandler( async (req,res) => {
 
 //! delete post
 const deletePost = asyncHandler( async (req,res) => {
-    
+    const userId = req.user._id
+    const post = await Post.findById(req.params.postId)
+    if (post.author.toString() != userId.toString()) {
+        res.status(400).json({message: 'Not authorized to access this resource'})
+        return
+    } else {
+        await Post.findByIdAndDelete(post._id)
+        await User.findByIdAndUpdate(userId, {$pull: {posts:post._id}})
+        res.status(200).json({message: 'deleted', deletedPostId: post._id})
+
+    }
 })
 
 //! like post

@@ -20,6 +20,7 @@ router.get('/:postId/:commentId', protect, getComment)
 router.put('/:postId/:commentId/like', protect, likeComment) 
 router.put('/:postId/:commentId/unlike', protect, unlikeComment) 
 router.put('/:postId/:commentId/report', protect, reportComment)
+router.delete('/:postId', protect, deletePost)
 
 router.delete('/:postId/:commentId/delete', protect, deleteComment)
 
