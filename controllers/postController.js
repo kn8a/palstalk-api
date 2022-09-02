@@ -118,15 +118,23 @@ const getBoard = asyncHandler( async (req,res) => {
 
 //! Get my posts
 const getMyPosts = asyncHandler( async (req,res) => {
-    const myPosts = await Post.find({'author': req.user._id})
+    //console.log(req.user)
+    const myPosts = await Post.find({_id:{$in:req.user.posts}})
     .populate("comments")
     .populate({path: 'author', select:{name_first: 1, name_last:1, profile_pic:1} })
     .populate({path: "comments", populate: { path: "author", select:{name_first: 1, name_last:1, profile_pic:1}}
     })
     .sort("-createdAt")
-    
+    console.log(myPosts)
     res.status(200).json(myPosts)
+    
 })
+
+
+const updatePost = asyncHandler( async (req,res) => {
+
+})
+
     
 module.exports = {
     createPost, editPost, deletePost, likePost, reportPost, getPost, unlikePost, getBoard, getMyPosts
