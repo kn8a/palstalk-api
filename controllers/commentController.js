@@ -45,8 +45,8 @@ const createComment = asyncHandler( async (req,res) => {
         author: req.user._id,
         postId: req.params.postId
     })
-    await Post.findByIdAndUpdate({_id: req.params.postId}, {$push: {comments: comment._id}})
-    res.status(200).json(comment)
+    const newComment = await Post.findByIdAndUpdate({_id: req.params.postId}, {$push: {comments: comment._id}})
+    res.status(200).json(newComment)
 })
 
 //^ comment edit - add "isEdited" field to model - only author
