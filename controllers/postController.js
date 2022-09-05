@@ -139,7 +139,6 @@ const getMyPosts = asyncHandler( async (req,res) => {
     .sort("-createdAt")
     console.log(myPosts)
     res.status(200).json(myPosts)
-    
 })
 
 
