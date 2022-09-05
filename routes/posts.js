@@ -2,11 +2,11 @@ var express = require('express');
 const { route } = require('.');
 const { protect } = require('../middleware/authMiddleware');
 var router = express.Router();
-const {createPost, getPost, getBoard, editPost, deletePost, getMyPosts, likePost, reportPost, unlikePost} = require('../controllers/postController')
+const {createPost, updatePost, getPost, getBoard, editPost, deletePost, getMyPosts, likePost, reportPost, unlikePost} = require('../controllers/postController')
 const {getCommentsForPost, getComment, createComment, editComment, likeComment, unlikeComment, reportComment, deleteComment} = require('../controllers/commentController')
 
 router.post('/', protect, createPost)
-router.put('/:postId', protect, editPost)
+router.put('/:postId', protect, updatePost)
 router.put('/:postId/like', protect, likePost)
 router.put('/:postId/unlike', protect, unlikePost)
 router.put('/:postId/report', protect, reportPost)
