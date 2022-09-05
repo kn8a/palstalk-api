@@ -1,5 +1,6 @@
 const User = require('../models/userModel')
 const Post = require('../models/postModel')
+const Comment = require('../models/commentModel')
 const asyncHandler = require('express-async-handler')
 const sanitizeHtml = require('sanitize-html');
 
@@ -44,10 +45,10 @@ const deletePost = asyncHandler( async (req,res) => {
         res.status(400).json({message: 'Not authorized to access this resource'})
         return
     } else {
-        await Post.findByIdAndDelete(post._id)
+        await Comment.findAndDelete({postId: post._id})
         await User.findByIdAndUpdate(userId, {$pull: {posts:post._id}})
+        await Post.findByIdAndDelete(post._id)
         res.status(200).json({message: 'deleted', deletedPostId: post._id})
-
     }
 })
 
@@ -143,10 +144,21 @@ const getMyPosts = asyncHandler( async (req,res) => {
 
 
 const updatePost = asyncHandler( async (req,res) => {
+    const post = await Post.findById(req.params.postId)
+    if (post.author.toString() != req.user._id.toString()) {
+        res.status(400).json({message: 'You are not authorized to access this resource'})
+        return
+    } else {
+        const updatedPost = await Post.findByIdAndUpdate(req.params.postId, {content: sanitizeHtml(req.body.content)}, {
+            new: true,
+        })
+        res.status(200).json(updatedPost)
+
+    }
 
 })
 
     
 module.exports = {
-    createPost, editPost, deletePost, likePost, reportPost, getPost, unlikePost, getBoard, getMyPosts
+    createPost, editPost, deletePost, likePost, reportPost, getPost, unlikePost, getBoard, getMyPosts, updatePost
 }
