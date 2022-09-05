@@ -1,12 +1,13 @@
 const User = require('../models/userModel')
 const Post = require('../models/postModel')
 const asyncHandler = require('express-async-handler')
+const sanitizeHtml = require('sanitize-html');
 
 //! Create post
 const createPost = asyncHandler( async (req,res) => {
     const { content, image } = req.body
     const newPost = await Post.create({
-        content,
+        content: sanitizeHtml(content),
         image,
         author: req.user._id
     })
