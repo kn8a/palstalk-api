@@ -33,6 +33,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 const getFile = asyncHandler( async (req,res) => {
+  if (!req.params.imageId) {
+    return
+  }
   const file = await Upload.findById(req.params.imageId)
   //console.log(req)
   res.status(200).header('Content-Type', file.file.contentType).send(file.file.data)

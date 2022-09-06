@@ -136,10 +136,18 @@ const getUser = asyncHandler( async (req,res) => {
             res.status(404).json({message: 'user not found'})
             return
         }
+        
+    if (user._id.toString() == req.user._id.toString()) {
+        const userToSend = await User.findById(req.params.userId).select({password:0, pending_requests:0, email:0})
+        .populate({path: 'friends', select:{name_first: 1, name_last:1, profile_pic:1}})
+        .populate("posts")
+        res.status(200).json({user: userToSend, friend: true})
+        return
+    }
     //check if a friend
     const userIsFriend = req.user.friends.indexOf(user._id.toString())
     if (userIsFriend == -1) {
-        const userToSend = await User.findById(req.params.userId).select({name_first:1, name_last:1, profile_pic:1, friends:1})
+        const userToSend = await User.findById(req.params.userId).select({name_first:1, name_last:1, profile_pic:1, friends:1, bio:1})
         .populate({path: 'friends', select:{name_first: 1, name_last:1, profile_pic:1}})
         res.status(200).json({user: userToSend, friend: false})
         return
