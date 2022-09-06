@@ -38,8 +38,13 @@ const getFile = asyncHandler( async (req,res) => {
   res.status(200).header('Content-Type', file.file.contentType).send(file.file.data)
 })
 
-app.get('/api/file/:imageId', getFile)
+const pingServer = asyncHandler( async (req,res) => {
+  const message = 'ok'
+  res.status(200).json({message: message})
+})
 
+app.get('/api/file/:imageId', getFile)
+app.get('/api/ping', pingServer)
 
 app.use('/', indexRouter);
 app.use('/api/users', usersRouter);
