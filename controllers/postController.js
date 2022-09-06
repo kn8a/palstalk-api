@@ -99,7 +99,7 @@ const getPost = asyncHandler( async (req,res) => {
     .populate({path: 'author', select:{name_first: 1, name_last:1, profile_pic:1} })
     .populate({path: "comments", populate: { path: "author", select:{name_first: 1, name_last:1, profile_pic:1}}
     })
-    console.log(req.user.friends, post.author._id, req.user._id)
+    //console.log(req.user.friends, post.author._id, req.user._id)
     const authorIsFriend = req.user.friends.indexOf(post.author._id)
 
     if (authorIsFriend != -1 || post.author._id.toString() == req.user._id.toString()) {
@@ -137,7 +137,7 @@ const getMyPosts = asyncHandler( async (req,res) => {
     .populate({path: "comments", populate: { path: "author", select:{name_first: 1, name_last:1, profile_pic:1}}
     })
     .sort("-createdAt")
-    console.log(myPosts)
+    //console.log(myPosts)
     res.status(200).json(myPosts)
 })
 
