@@ -105,6 +105,7 @@ const declineFriendRequest = asyncHandler( async (req,res) => {
     const updateRequest = await FriendRequest.findByIdAndUpdate(req.params.requestId, {status: 'declined'})
     const updateSender = await User.findByIdAndUpdate(sender._id,  {$pull: {pending_requests:request._id}})
     const updateReceiver = await User.findByIdAndUpdate(receiver._id, {$pull: {pending_requests:request._id}})
+    await FriendRequest.findByIdAndDelete(updateRequest._id) //delete request
     res.status(200).json({message: 'Friend request declined'})
 })
 
@@ -132,6 +133,7 @@ const cancelFriendRequest = asyncHandler( async (req,res) => {
     const updateRequest = await FriendRequest.findByIdAndUpdate(req.params.requestId, {status: 'cancelled'})
     const updateSender = await User.findByIdAndUpdate(sender._id, {$pull: {pending_requests:request._id}})
     const updateReceiver = await User.findByIdAndUpdate(receiver._id, {$pull: {pending_requests:request._id}})
+    await FriendRequest.findByIdAndDelete(updateRequest._id) //delete request
     res.status(200).json({message: 'Friend request cancelled'})
 })
 
@@ -158,7 +160,7 @@ const unfriend = asyncHandler( async (req,res) => {
     const updateRequest = await FriendRequest.findByIdAndUpdate(req.params.requestId, {status: 'unfriended'})
     const updateSender = await User.findByIdAndUpdate(sender._id, {$pull: {friends: receiver}})
     const updateReceiver = await User.findByIdAndUpdate(receiver._id, {$pull: {friends: sender}})
-
+    await FriendRequest.findByIdAndDelete(updateRequest._id) //delete request
     res.status(200).json({message: 'Unfriended successfully'})
 })
 
@@ -171,10 +173,11 @@ const unfriendById = asyncHandler(async (req,res) => {
     } else {
         const updateMe = await User.findByIdAndUpdate(req.user._id, {$pull: {friends: userToUnfriend}})
         const updateThem = await User.findByIdAndUpdate(userToUnfriend, {$pull: {friends: req.user._id}})
-        await FriendRequest.findOneAndUpdate({$or:[
+        const updateRequest = await FriendRequest.findOneAndUpdate({$or:[
             {to: userToUnfriend, from: req.user._id},
             {to: req.user._id, from: userToUnfriend}
         ]}, {status: 'unfriended'})
+        await FriendRequest.findByIdAndDelete(updateRequest._id) //delete request
         res.status(200).json({message: 'Unfriended successfully'})
     }
 })

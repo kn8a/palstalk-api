@@ -45,7 +45,7 @@ const deletePost = asyncHandler( async (req,res) => {
         res.status(400).json({message: 'Not authorized to access this resource'})
         return
     } else {
-        await Comment.findAndDelete({postId: post._id})
+        await Comment.deleteMany({postId: post._id})
         await User.findByIdAndUpdate(userId, {$pull: {posts:post._id}})
         await Post.findByIdAndDelete(post._id)
         res.status(200).json({message: 'deleted', deletedPostId: post._id})
