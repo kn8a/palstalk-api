@@ -18,26 +18,21 @@ const asyncHandler = require('express-async-handler')
 
 connectDb()
 
-
 var app = express();
 
-// view engine setup
 app.use(cors());
-//app.set('views', path.join(__dirname, 'views'));
-//app.set('view engine', 'ejs');
-
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+//getting images from URL
 const getFile = asyncHandler( async (req,res) => {
   if (!req.params.imageId) {
     return
   }
   const file = await Upload.findById(req.params.imageId)
-  //console.log(req)
   res.status(200).header('Content-Type', file.file.contentType).send(file.file.data)
 })
 
@@ -48,31 +43,14 @@ const pingServer = asyncHandler( async (req,res) => {
 
 app.get('/api/file/:imageId', getFile)
 app.get('/api/ping', pingServer)
-
 app.use('/', indexRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/requests', requestsRouter);
 app.use('/api/posts', postsRouter)
 
-
-
-
-
-
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
-
-// // error handler
-// app.use(function(err, req, res, next) {
-//   // set locals, only providing error in development
-//   res.locals.message = err.message;
-//   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-//   // render the error page
-//   res.status(err.status || 500);
-//   res.render('error');
-// });
 
 module.exports = app;

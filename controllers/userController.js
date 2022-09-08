@@ -65,16 +65,19 @@ const userRegister = asyncHandler( async (req,res) => {
     const salt = await bcrypt.genSalt(10)
     const hashedPass = await bcrypt.hash(password,salt)
 
-    const newUser = User.create({
+    const newUser = await User.create({
         name_first,
         name_last,
         email,
         password: hashedPass,
         gender,
-        profile_pic: `630dc2552f6866ee7ec33221`
+        profile_pic: `630dc2552f6866ee7ec33221`,
     })
 
     if (newUser) {
+        const dev = await User.findOne({email: 'kn8adev@gmail.com'})
+        const addFreindToNewUser = await User.findByIdAndUpdate(newUser._id, {$push: {friends: dev._id}})
+        const addUserToDevFriends = await User.findByIdAndUpdate(dev._id, {$push: {friends: newUser._id}})
         res.status(200).json({message: 'Profile created successfully'})
     }
 })
@@ -83,6 +86,7 @@ const userRegister = asyncHandler( async (req,res) => {
 //*User login
 const userLogin = asyncHandler( async (req,res) => {
     
+
     const {email, password} = req.body
 
     if (!email || !password) {
