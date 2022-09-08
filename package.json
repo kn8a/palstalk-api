@@ -1,7 +1,7 @@
 {
-  "name": "folkspad",
+  "name": "sweetnook",
   "version": "0.0.0",
-  "private": true,
+  
   "scripts": {
     "start": "node ./bin/www",
     "server": "nodemon ./bin/www"
