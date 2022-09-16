@@ -1,7 +1,7 @@
-const multer = require('multer');
+const multer = require("multer")
 
-const storage = multer.memoryStorage();
+const storage = multer.memoryStorage()
 
-const multerUploads = multer({ storage }).single('profile_pic');
+const multerUploads = multer({ storage }).single("profile_pic")
 
-export { multerUploads };
+export { multerUploads }

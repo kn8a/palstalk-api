@@ -3,26 +3,26 @@ const { route } = require(".")
 const { protect } = require("../middleware/authMiddleware")
 var router = express.Router()
 const {
-	createPost,
-	updatePost,
-	getPost,
-	getBoard,
-	editPost,
-	deletePost,
-	getMyPosts,
-	likePost,
-	reportPost,
-	unlikePost,
+  createPost,
+  updatePost,
+  getPost,
+  getBoard,
+  editPost,
+  deletePost,
+  getMyPosts,
+  likePost,
+  reportPost,
+  unlikePost,
 } = require("../controllers/postController")
 const {
-	getCommentsForPost,
-	getComment,
-	createComment,
-	editComment,
-	likeComment,
-	unlikeComment,
-	reportComment,
-	deleteComment,
+  getCommentsForPost,
+  getComment,
+  createComment,
+  editComment,
+  likeComment,
+  unlikeComment,
+  reportComment,
+  deleteComment,
 } = require("../controllers/commentController")
 
 router.post("/", protect, createPost)

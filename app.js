@@ -29,18 +29,19 @@ app.use(express.static(path.join(__dirname, "public")))
 
 //getting images from URL
 const getFile = asyncHandler(async (req, res) => {
-	if (!req.params.imageId) {
-		return
-	}
-	const file = await Upload.findById(req.params.imageId)
-	res.status(200)
-		.header("Content-Type", file.file.contentType)
-		.send(file.file.data)
+  if (!req.params.imageId) {
+    return
+  }
+  const file = await Upload.findById(req.params.imageId)
+  res
+    .status(200)
+    .header("Content-Type", file.file.contentType)
+    .send(file.file.data)
 })
 
 const pingServer = asyncHandler(async (req, res) => {
-	const message = "ok"
-	res.status(200).json({ message: message })
+  const message = "ok"
+  res.status(200).json({ message: message })
 })
 
 app.get("/api/file/:imageId", getFile)
@@ -52,7 +53,7 @@ app.use("/api/posts", postsRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-	next(createError(404))
+  next(createError(404))
 })
 
 module.exports = app

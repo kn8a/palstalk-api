@@ -4,13 +4,13 @@ var router = express.Router()
 const { protect } = require("../middleware/authMiddleware")
 
 const {
-	getReceived,
-	getSent,
-	getRequest,
-	acceptFriendRequest,
-	declineFriendRequest,
-	cancelFriendRequest,
-	unfriend,
+  getReceived,
+  getSent,
+  getRequest,
+  acceptFriendRequest,
+  declineFriendRequest,
+  cancelFriendRequest,
+  unfriend,
 } = require("../controllers/friendRequestController")
 
 router.get("/received", protect, getReceived)

@@ -3,33 +3,33 @@ const { route } = require(".")
 var router = express.Router()
 const { protect } = require("../middleware/authMiddleware")
 const {
-	userRegister,
-	userLogin,
-	userUpdate,
-	getMe,
-	getUser,
-	getAllUsers,
-	uploadProfilePic,
+  userRegister,
+  userLogin,
+  userUpdate,
+  getMe,
+  getUser,
+  getAllUsers,
+  uploadProfilePic,
 } = require("../controllers/userController")
 const {
-	sendFriendRequest,
-	unfriend,
-	unfriendById,
+  sendFriendRequest,
+  unfriend,
+  unfriendById,
 } = require("../controllers/friendRequestController")
 
 //setting options for multer
 const multer = require("multer")
 const storage = multer.memoryStorage()
 const upload = multer({
-	storage: storage,
-	limits: {
-		fileSize: 1 * 1024 * 1024, // no larger than 5mb, you can change as needed.
-	},
+  storage: storage,
+  limits: {
+    fileSize: 1 * 1024 * 1024, // no larger than 5mb, you can change as needed.
+  },
 })
 
 /* GET users listing. */
 router.get("/", function (req, res, next) {
-	res.send("respond with a resource")
+  res.send("respond with a resource")
 })
 
 router.post("/register", userRegister)
