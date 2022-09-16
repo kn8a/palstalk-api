@@ -1,7 +1,6 @@
 {
   "name": "sweetnook",
   "version": "0.0.0",
-  
   "scripts": {
     "start": "node ./bin/www",
     "server": "nodemon ./bin/www"
@@ -29,6 +28,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "nodemon": "^2.0.18"
+    "nodemon": "^2.0.18",
+    "prettier": "2.7.1"
   }
 }
