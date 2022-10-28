@@ -1,4 +1,4 @@
-# sweetnook API ([React frontend](https://github.com/kn8a/sweetnook))
+# sweetnook API [[Go to React frontend](https://github.com/kn8a/sweetnook)]
 
 API backend for [sweetnook](https://github.com/kn8a/sweetnook)
 
