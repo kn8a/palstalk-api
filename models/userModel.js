@@ -35,7 +35,7 @@ const userSchema = mongoose.Schema(
     },
     profile_pic: {
       type: String,
-      default: "/api/file/630dc2552f6866ee7ec33221",
+      default: "630dc2552f6866ee7ec33221",
     },
     friends: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     pending_requests: [

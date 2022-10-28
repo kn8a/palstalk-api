@@ -29,14 +29,22 @@ app.use(express.static(path.join(__dirname, "public")))
 
 //getting images from URL
 const getFile = asyncHandler(async (req, res) => {
-  if (!req.params.imageId) {
-    return
-  }
-  const file = await Upload.findById(req.params.imageId)
+  console.log(req.params.imageId)
+  if (req.params.imageId) {
+    const file = await Upload.findById(req.params.imageId)
+    console.log(req.params.imageId)
+    console.log(file)
   res
     .status(200)
     .header("Content-Type", file.file.contentType)
     .send(file.file.data)
+    console.log("return")
+    return
+  } else {
+    res.status(200).json({message: 'waiting for filename'})
+    return
+  }
+  
 })
 
 const pingServer = asyncHandler(async (req, res) => {
